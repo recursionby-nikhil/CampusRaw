@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusRaw — Real College. Unfiltered.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --accent: #ff3c00;
+    --accent2: #ffcc00;
+    --text: #f0ece4;
+    --muted: #555;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; cursor: none; }
+
+  .cursor { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.15s ease; transform: translate(-50%, -50%); }
+  .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(255,60,0,0.4); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: all 0.08s ease; }
+
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 100; opacity: 0.6; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid transparent; transition: border-color 0.3s, background 0.3s; }
+  nav.scrolled { background: rgba(10,10,10,0.92); border-color: var(--border); backdrop-filter: blur(12px); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.05em; }
+  .logo span { color: var(--accent); }
+  nav a { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+  nav a:hover { color: var(--text); }
+  .nav-cta { background: var(--accent) !important; color: white !important; padding: 10px 22px; }
+  .nav-cta:hover { background: #ff5520 !important; }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+
+  .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 40px 80px; position: relative; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 70% 40%, rgba(255,60,0,0.13) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 20% 70%, rgba(255,204,0,0.07) 0%, transparent 50%); }
+  .hero-tape { position: absolute; top: 30%; right: -20px; font-family: 'Bebas Neue', sans-serif; font-size: 22vw; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.04); pointer-events: none; white-space: nowrap; line-height: 1; transform: rotate(3deg); }
+  .hero-tag { display: inline-block; background: var(--accent); color: white; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 14px; margin-bottom: 28px; animation: fadeUp 0.8s ease both; }
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.92; max-width: 900px; animation: fadeUp 0.8s 0.1s ease both; }
+  .hero h1 em { font-style: normal; color: var(--accent); display: block; }
+  .hero-sub { margin-top: 32px; font-size: 1.05rem; color: var(--muted); max-width: 480px; line-height: 1.6; font-weight: 300; animation: fadeUp 0.8s 0.2s ease both; }
+  .hero-actions { margin-top: 48px; display: flex; align-items: center; gap: 24px; animation: fadeUp 0.8s 0.3s ease both; }
+  .btn-primary { background: var(--accent); color: white; border: none; padding: 16px 36px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; cursor: none; transition: background 0.2s, transform 0.1s; text-decoration: none; display: inline-block; }
+  .btn-primary:hover { background: #ff5520; transform: translateY(-2px); }
+  .btn-ghost { color: var(--muted); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; transition: color 0.2s; }
+  .btn-ghost:hover { color: var(--text); }
+  .hero-stats { position: absolute; right: 40px; bottom: 80px; display: flex; flex-direction: column; gap: 24px; animation: fadeUp 0.8s 0.4s ease both; }
+  .stat { text-align: right; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; line-height: 1; }
+  .stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* STICKER */
+  .sticker { position: absolute; top: 130px; right: 80px; width: 110px; height: 110px; animation: fadeUp 0.8s 0.5s ease both; }
+  .sticker-inner { width: 100%; height: 100%; position: relative; animation: spin 12s linear infinite; }
+  .sticker-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .marquee-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 16px 0; background: var(--surface); }
+  .marquee { display: flex; gap: 60px; animation: marquee 22s linear infinite; width: max-content; }
+  .marquee span { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.1em; color: var(--muted); white-space: nowrap; }
+  .marquee span b { color: var(--accent); }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  .section { padding: 120px 40px; }
+  .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; max-width: 640px; }
+
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; margin-top: 80px; border: 1px solid var(--border); }
+  .feature-card { padding: 48px 36px; border-right: 1px solid var(--border); position: relative; overflow: hidden; transition: background 0.3s; }
+  .feature-card:hover { background: rgba(255,60,0,0.04); }
+  .feature-card:last-child { border-right: none; }
+  .feature-icon { font-size: 2rem; margin-bottom: 24px; display: block; }
+  .feature-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; margin-bottom: 12px; }
+  .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; font-weight: 300; }
+  .feature-corner { position: absolute; bottom: 20px; right: 20px; font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: rgba(255,255,255,0.02); line-height: 1; }
+
+  /* PHONE SECTION */
+  .phone-section { padding: 120px 40px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .phone-text h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 4vw, 4rem); line-height: 1; margin-bottom: 24px; }
+  .phone-text h2 span { color: var(--accent); }
+  .phone-text p { color: var(--muted); line-height: 1.7; font-size: 0.95rem; font-weight: 300; max-width: 400px; }
+  .phone-wrap { display: flex; justify-content: center; position: relative; }
+  .phone { width: 220px; height: 420px; background: #0f0f0f; border: 2px solid #2a2a2a; border-radius: 36px; position: relative; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px #1a1a1a; }
+  .phone::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 60px; height: 6px; background: #1a1a1a; border-radius: 3px; z-index: 10; }
+  .phone-screen { position: absolute; inset: 0; }
+  .phone-clip { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px 14px; transition: opacity 0.6s ease, transform 0.6s ease; }
+  .phone-clip.inactive { opacity: 0; transform: translateY(20px); pointer-events: none; }
+  .phone-clip-bg { position: absolute; inset: 0; background-size: cover; }
+  .clip1-bg { background: linear-gradient(160deg, #1a0a00 0%, #3d1500 50%, rgba(255,60,0,0.15) 100%); }
+  .clip2-bg { background: linear-gradient(160deg, #00091a 0%, #001540 50%, rgba(0,63,255,0.15) 100%); }
+  .clip3-bg { background: linear-gradient(160deg, #0a001a 0%, #2a0040 50%, rgba(153,0,255,0.15) 100%); }
+  .clip4-bg { background: linear-gradient(160deg, #001a08 0%, #003d18 50%, rgba(0,255,68,0.1) 100%); }
+  .phone-clip-bg::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 4px); }
+  .phone-meta { position: relative; z-index: 2; }
+  .phone-uni { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
+  .phone-caption { font-size: 0.78rem; font-weight: 500; color: white; line-height: 1.3; margin-bottom: 10px; }
+  .phone-likes { display: flex; gap: 14px; }
+  .phone-likes span { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+  .phone-likes b { color: white; }
+  .phone-live-badge { position: absolute; top: 28px; left: 14px; background: var(--accent); color: white; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; padding: 3px 8px; animation: blink 1.5s ease infinite; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .phone-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); animation: prog 4s linear infinite; }
+  @keyframes prog { from { width: 0; } to { width: 100%; } }
+  .phone-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(255,60,0,0.12) 0%, transparent 70%); pointer-events: none; animation: glowPulse 3s ease infinite; }
+  @keyframes glowPulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* TESTIMONIALS */
+  .testimonials-section { padding: 120px 40px; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 60px; }
+  .testimonial-card { background: var(--surface); border: 1px solid var(--border); padding: 32px 28px; position: relative; transition: border-color 0.3s; }
+  .testimonial-card:hover { border-color: rgba(255,60,0,0.3); }
+  .testimonial-card:nth-child(2) { margin-top: 30px; }
+  .testimonial-card:nth-child(5) { margin-top: -20px; }
+  .tcard-quote { font-size: 2.5rem; color: var(--accent); line-height: 1; font-family: 'Bebas Neue', sans-serif; margin-bottom: 16px; opacity: 0.5; }
+  .tcard-text { font-size: 0.88rem; line-height: 1.7; color: rgba(240,236,228,0.75); font-weight: 300; margin-bottom: 24px; }
+  .tcard-author { display: flex; align-items: center; gap: 12px; }
+  .tcard-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; background: var(--border); flex-shrink: 0; }
+  .tcard-name { font-size: 0.8rem; font-weight: 500; }
+  .tcard-uni { font-size: 0.72rem; color: var(--muted); }
+  .tcard-verified { position: absolute; top: 20px; right: 20px; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(255,60,0,0.3); padding: 3px 8px; }
+
+  /* WORLD MAP */
+  .worldmap-section { padding: 120px 40px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center; }
+  .map-container { margin-top: 60px; position: relative; max-width: 800px; margin-left: auto; margin-right: auto; }
+  .map-svg { width: 100%; opacity: 0.12; }
+  .map-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); }
+  .map-dot::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 20px; height: 20px; border-radius: 50%; background: rgba(255,60,0,0.2); animation: ripple 2s ease infinite; }
+  .map-dot::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,60,0,0.07); animation: ripple 2s 0.6s ease infinite; }
+  .map-dot:nth-child(3n)::before { animation-delay: 0.4s; }
+  .map-dot:nth-child(2n)::before { animation-delay: 0.8s; }
+  @keyframes ripple { 0% { transform: translate(-50%,-50%) scale(1); opacity: 1; } 100% { transform: translate(-50%,-50%) scale(3.5); opacity: 0; } }
+  .map-label { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); background: rgba(10,10,10,0.9); border: 1px solid var(--border); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 4px 10px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .map-dot:hover .map-label { opacity: 1; }
+  .map-counter { margin-top: 56px; display: flex; justify-content: center; gap: 80px; }
+  .map-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1; }
+  .map-stat-num span { color: var(--accent); }
+  .map-stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 6px; }
+
+  /* NOT HERE */
+  .nothinghere-section { padding: 120px 40px; }
+  .nothere-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border: 1px solid var(--border); margin-top: 60px; }
+  .nothere-item { padding: 36px 40px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 20px; transition: background 0.3s; }
+  .nothere-item:hover { background: rgba(255,60,0,0.03); }
+  .nothere-x { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--accent); line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  .nothere-item h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 6px; }
+  .nothere-item p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+  /* FAQ */
+  .faq-section { padding: 120px 40px; background: var(--surface); border-top: 1px solid var(--border); }
+  .faq-list { margin-top: 60px; max-width: 700px; }
+  .faq-item { border-bottom: 1px solid var(--border); overflow: hidden; }
+  .faq-q { padding: 24px 0; display: flex; justify-content: space-between; align-items: center; cursor: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+  .faq-q:hover { color: var(--accent); }
+  .faq-icon { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--muted); transition: transform 0.3s, color 0.2s; flex-shrink: 0; margin-left: 20px; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); color: var(--accent); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; color: var(--muted); font-size: 0.88rem; line-height: 1.7; font-weight: 300; }
+  .faq-item.open .faq-a { max-height: 200px; padding-bottom: 24px; }
+
+  /* HOW */
+  .how-section { padding: 120px 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; margin-top: 80px; }
+  .step { position: relative; }
+  .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.08); line-height: 1; margin-bottom: 20px; }
+  .step h3 { font-size: 1.1rem; font-weight: 500; margin-bottom: 10px; }
+  .step p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; font-weight: 300; }
+  .step-line { position: absolute; top: 40px; right: -30px; width: 60px; height: 1px; background: var(--border); }
+
+  /* CTA */
+  .cta-section { padding: 160px 40px; text-align: center; position: relative; overflow: hidden; }
+  .cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255,60,0,0.1) 0%, transparent 70%); }
+  .cta-section h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 8rem); line-height: 0.95; position: relative; }
+  .cta-section h2 span { color: var(--accent); }
+  .waitlist-count { margin-top: 28px; font-size: 0.88rem; color: var(--muted); position: relative; }
+  .waitlist-count b { color: #ffffff; }
+  .email-form { margin-top: 40px; display: flex; justify-content: center; max-width: 500px; margin-left: auto; margin-right: auto; position: relative; }
+  .email-form input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-right: none; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; padding: 16px 20px; outline: none; transition: border-color 0.2s; }
+  .email-form input::placeholder { color: var(--muted); }
+  .email-form input:focus { border-color: var(--accent); }
+  .email-form button { background: var(--accent); color: white; border: none; padding: 16px 28px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: none; transition: background 0.2s; white-space: nowrap; }
+  .email-form button:hover { background: #ff5520; }
+  .form-note { margin-top: 14px; font-size: 0.75rem; color: var(--muted); position: relative; }
+  .success-msg { display: none; margin-top: 20px; font-size: 0.95rem; color: var(--accent2); position: relative; }
+
+  footer { border-top: 1px solid var(--border); padding: 40px; display: flex; justify-content: space-between; align-items: center; }
+  footer p { font-size: 0.8rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 0.8rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .phone-section { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .testimonial-card:nth-child(2), .testimonial-card:nth-child(5) { margin-top: 0; }
+    .nothere-grid { grid-template-columns: 1fr; }
+    .sticker { display: none; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { gap: 16px; }
+    .hero { padding: 0 20px 60px; }
+    .hero-stats { display: none; }
+    .section, .how-section, .cta-section, .testimonials-section, .nothinghere-section, .faq-section, .worldmap-section, .phone-section { padding: 80px 20px; }
+    .steps { grid-template-columns: 1fr; gap: 40px; }
+    .step-line { display: none; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .map-counter { flex-direction: column; gap: 24px; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <div class="logo">Campus<span>Raw</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#proof">Students</a>
+    <a href="#faq">FAQ</a>
+    <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-tape">RAW</div>
+
+  <!-- Spinning sticker 
+  <div class="sticker">
+    <div class="sticker-inner">
+      <svg viewBox="0 0 100 100" style="position:absolute;width:100%;height:100%;">
+        <path id="sp" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none"/>
+        <text font-size="10.2" font-family="DM Sans,sans-serif" font-weight="600" fill="#ffcc00" letter-spacing="2.5">
+          <textPath href="#sp">UNFILTERED • NOT FOR PARENTS • </textPath>
+        </text>
+      </svg>
+      <div class="sticker-center">🎥</div>
+    </div>
+  </div> -->
+
+  <div class="hero-tag">🔴 Beta launching soon</div>
+  <h1>College Life.<em>Unfiltered.</em></h1>
+  <p class="hero-sub">A video platform built for students — short clips, long videos, live streams, stories. Real moments from real campuses. No algorithm. No polish. No parents.</p>
+  <div class="hero-actions">
+    <a href="#waitlist" class="btn-primary">Get Early Access</a>
+    <a href="#features" class="btn-ghost">See What's Coming</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num" id="heroCount">1,247</div><div class="stat-label">On waitlist</div></div>
+    <div class="stat"><div class="stat-num">0%</div><div class="stat-label">Corporate filter</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Chaos potential</div></div>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>MIT <b>•</b></span><span>IIT Bombay <b>•</b></span><span>Oxford <b>•</b></span><span>Stanford <b>•</b></span><span>BITS Pilani <b>•</b></span><span>Cambridge <b>•</b></span><span>NUS Singapore <b>•</b></span><span>UC Berkeley <b>•</b></span><span>DU Delhi <b>•</b></span><span>Harvard <b>•</b></span><span>IIT Delhi <b>•</b></span><span>NYU <b>•</b></span><span>UNSW Sydney <b>•</b></span><span>Jadavpur <b>•</b></span><span>LSE <b>•</b></span>
+    <span>MIT <b>•</b></span><span>IIT Bombay <b>•</b></span><span>Oxford <b>•</b></span><span>Stanford <b>•</b></span><span>BITS Pilani <b>•</b></span><span>Cambridge <b>•</b></span><span>NUS Singapore <b>•</b></span><span>UC Berkeley <b>•</b></span><span>DU Delhi <b>•</b></span><span>Harvard <b>•</b></span><span>IIT Delhi <b>•</b></span><span>NYU <b>•</b></span><span>UNSW Sydney <b>•</b></span><span>Jadavpur <b>•</b></span><span>LSE <b>•</b></span>
+  </div>
+</div>
+
+<section class="section" id="features">
+  <p class="section-label reveal">What we're building</p>
+  <h2 class="section-title reveal">Four formats. One campus energy.</h2>
+  <div class="features-grid">
+    <div class="feature-card reveal"><span class="feature-icon">⚡</span><h3>Short Clips</h3><p>The best 60 seconds of your college life. Vertical, raw, real. Scroll your campus feed or the global one.</p><div class="feature-corner">01</div></div>
+    <div class="feature-card reveal"><span class="feature-icon">🎬</span><h3>Long Videos</h3><p>Full vlogs, event recaps, exposés, documentaries — no time limit, no monetization gatekeeping.</p><div class="feature-corner">02</div></div>
+    <div class="feature-card reveal"><span class="feature-icon">🔴</span><h3>Live Streams</h3><p>Stream your college fest, protest, late-night session, or just your dorm at 2am. Live means live.</p><div class="feature-corner">03</div></div>
+    <div class="feature-card reveal"><span class="feature-icon">👻</span><h3>Stories</h3><p>24-hour glimpses into campus life. Ephemeral, honest, no archive pressure.</p><div class="feature-corner">04</div></div>
+  </div>
+</section>
+
+<!-- PHONE MOCKUP -->
+<section class="phone-section">
+  <div class="phone-text reveal">
+    <p class="section-label">The vibe</p>
+    <h2>Looks like <span>this.</span><br>Feels like that.</h2>
+    <p style="margin-top:20px;">Every campus has a story the rest of the world hasn't seen yet. CampusRaw is where it finally gets told — raw, real, and completely unfiltered.</p>
+  </div>
+  <div class="phone-wrap reveal">
+    <div class="phone-glow"></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-clip" id="clip1">
+          <div class="phone-clip-bg clip1-bg"></div>
+          <div class="phone-live-badge">● LIVE</div>
+          <div class="phone-meta">
+            <div class="phone-uni">IIT Bombay • Mumbai</div>
+            <div class="phone-caption">bhai canteen ke bahar kya ho raha hai 💀</div>
+            <div class="phone-likes"><span>❤️ <b>4.2k</b></span><span>💬 <b>318</b></span></div>
+          </div>
+          <div class="phone-progress"></div>
+        </div>
+        <div class="phone-clip inactive" id="clip2">
+          <div class="phone-clip-bg clip2-bg"></div>
+          <div class="phone-meta">
+            <div class="phone-uni">Oxford • UK</div>
+            <div class="phone-caption">when your professor roasts your entire thesis in 8 seconds</div>
+            <div class="phone-likes"><span>❤️ <b>12.1k</b></span><span>💬 <b>892</b></span></div>
+          </div>
+          <div class="phone-progress"></div>
+        </div>
+        <div class="phone-clip inactive" id="clip3">
+          <div class="phone-clip-bg clip3-bg"></div>
+          <div class="phone-meta">
+            <div class="phone-uni">BITS Pilani • Rajasthan</div>
+            <div class="phone-caption">oasis night 3 and we have NOT slept 🤡🎪</div>
+            <div class="phone-likes"><span>❤️ <b>28.7k</b></span><span>💬 <b>2.1k</b></span></div>
+          </div>
+          <div class="phone-progress"></div>
+        </div>
+        <div class="phone-clip inactive" id="clip4">
+          <div class="phone-clip-bg clip4-bg"></div>
+          <div class="phone-meta">
+            <div class="phone-uni">UC Berkeley • California</div>
+            <div class="phone-caption">finals week library at 4am. we are NOT okay</div>
+            <div class="phone-likes"><span>❤️ <b>9.4k</b></span><span>💬 <b>477</b></span></div>
+          </div>
+          <div class="phone-progress"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORLD MAP -->
+<section class="worldmap-section" id="proof">
+  <p class="section-label reveal">Global campus movement</p>
+  <h2 class="section-title reveal" style="margin:0 auto; text-align:center;">Students waiting.<br>Worldwide.</h2>
+  <div class="map-container reveal">
+    <svg class="map-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="200" cy="250" rx="160" ry="180" fill="#f0ece4" opacity="0.7"/>
+      <ellipse cx="490" cy="220" rx="120" ry="150" fill="#f0ece4" opacity="0.7"/>
+      <ellipse cx="600" cy="240" rx="80" ry="120" fill="#f0ece4" opacity="0.7"/>
+      <ellipse cx="720" cy="230" rx="130" ry="140" fill="#f0ece4" opacity="0.7"/>
+      <ellipse cx="870" cy="300" rx="70" ry="90" fill="#f0ece4" opacity="0.7"/>
+      <ellipse cx="490" cy="380" rx="60" ry="50" fill="#f0ece4" opacity="0.5"/>
+      <ellipse cx="200" cy="400" rx="40" ry="30" fill="#f0ece4" opacity="0.4"/>
+      <ellipse cx="870" cy="400" rx="80" ry="60" fill="#f0ece4" opacity="0.5"/>
+    </svg>
+    <div class="map-dot" style="left:20%;top:36%"><div class="map-label">UC Berkeley</div></div>
+    <div class="map-dot" style="left:26%;top:30%"><div class="map-label">Harvard + MIT</div></div>
+    <div class="map-dot" style="left:23%;top:38%"><div class="map-label">Stanford</div></div>
+    <div class="map-dot" style="left:28%;top:33%"><div class="map-label">NYU</div></div>
+    <div class="map-dot" style="left:48%;top:24%"><div class="map-label">Oxford</div></div>
+    <div class="map-dot" style="left:51%;top:26%"><div class="map-label">Cambridge</div></div>
+    <div class="map-dot" style="left:53%;top:30%"><div class="map-label">LSE London</div></div>
+    <div class="map-dot" style="left:70%;top:32%"><div class="map-label">IIT Delhi</div></div>
+    <div class="map-dot" style="left:72%;top:38%"><div class="map-label">IIT Bombay</div></div>
+    <div class="map-dot" style="left:68%;top:28%"><div class="map-label">BITS Pilani</div></div>
+    <div class="map-dot" style="left:83%;top:34%"><div class="map-label">NUS Singapore</div></div>
+    <div class="map-dot" style="left:88%;top:72%"><div class="map-label">UNSW Sydney</div></div>
+  </div>
+  <div class="map-counter reveal">
+    <div><div class="map-stat-num"><span id="uniCount">0</span>+</div><div class="map-stat-label">Universities</div></div>
+    <div><div class="map-stat-num"><span id="countryCount">0</span></div><div class="map-stat-label">Countries</div></div>
+    <div><div class="map-stat-num"><span id="waitlistCount">0</span>+</div><div class="map-stat-label">Students waiting</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <p class="section-label reveal">Real students. Real reactions.</p>
+  <h2 class="section-title reveal">They haven't used it yet.<br>They're already hyped.</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <div class="tcard-verified">Waitlisted</div>
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">Finally somewhere I can post the stuff Instagram deletes and TikTok shadowbans. My university's drama alone could fill a Netflix series.</p>
+      <div class="tcard-author"><div class="tcard-avatar">🧑‍💻</div><div><div class="tcard-name">Arjun M.</div><div class="tcard-uni">IIT Kharagpur, 3rd Year</div></div></div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="tcard-verified">Waitlisted</div>
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">YouTube feels like it was built by a committee of 50-year-olds who've never set foot in a dorm. This is the platform that actually gets it.</p>
+      <div class="tcard-author"><div class="tcard-avatar">👩‍🎓</div><div><div class="tcard-name">Sarah T.</div><div class="tcard-uni">UC Berkeley, 2nd Year</div></div></div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="tcard-verified">Waitlisted</div>
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">I want to live-stream our seniors' farewell AND document our mess food so the world can share in our suffering. This is built for exactly that.</p>
+      <div class="tcard-author"><div class="tcard-avatar">🎭</div><div><div class="tcard-name">Priya K.</div><div class="tcard-uni">BITS Pilani, Final Year</div></div></div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="tcard-verified">Waitlisted</div>
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">Oxford has some of the most unhinged traditions in the world and zero platforms to share them properly. Signed up immediately.</p>
+      <div class="tcard-author"><div class="tcard-avatar">🎓</div><div><div class="tcard-name">James W.</div><div class="tcard-uni">Oxford University, PPE</div></div></div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="tcard-verified">Waitlisted</div>
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">Every other algorithm punishes niche content. Removing it entirely? That's literally the only feature I needed to hear about.</p>
+      <div class="tcard-author"><div class="tcard-avatar">🎬</div><div><div class="tcard-name">Zara L.</div><div class="tcard-uni">NYU Tisch, Film Major</div></div></div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="tcard-verified">Waitlisted</div>
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">Our college fests are legendary and nobody outside knows. That's actually embarrassing. This is the fix I didn't know I needed.</p>
+      <div class="tcard-author"><div class="tcard-avatar">🎵</div><div><div class="tcard-name">Rahul S.</div><div class="tcard-uni">NIT Trichy, Cultural Sec</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU WON'T FIND -->
+<section class="nothinghere-section">
+  <p class="section-label reveal">The fine print (but actually fun)</p>
+  <h2 class="section-title reveal">What you WON'T find on CampusRaw.</h2>
+  <div class="nothere-grid">
+    <div class="nothere-item reveal"><div class="nothere-x">✗</div><div><h4>Brand deals disguised as content</h4><p>No "this video is sponsored by a VPN you'll never use." We're not that platform. Not now, not ever.</p></div></div>
+    <div class="nothere-item reveal"><div class="nothere-x">✗</div><div><h4>An algorithm with a hidden agenda</h4><p>We don't decide what goes viral. Your campus does. Chronological feed, no suppression, no boosted posts.</p></div></div>
+    <div class="nothere-item reveal"><div class="nothere-x">✗</div><div><h4>Your professor's account</h4><p>Only verified students can upload. Professors, admin staff, confused parents: watch-only. You're welcome.</p></div></div>
+    <div class="nothere-item reveal"><div class="nothere-x">✗</div><div><h4>Content that took 3 hours to film</h4><p>Point camera. Press record. Upload. The rawer it is, the more real it feels. That's the whole philosophy.</p></div></div>
+    <div class="nothere-item reveal"><div class="nothere-x">✗</div><div><h4>A 45% revenue cut</h4><p>YouTube takes almost half of what creators earn. We're building a fairer model — details at launch.</p></div></div>
+    <div class="nothere-item reveal"><div class="nothere-x">✗</div><div><h4>Mid-roll ads during your live stream</h4><p>Imagine going live at your college fest and a mattress ad interrupts. We'd never. That's a crime.</p></div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <p class="section-label reveal">Simple by design</p>
+  <h2 class="section-title reveal">How CampusRaw works</h2>
+  <div class="steps">
+    <div class="step reveal"><div class="step-num">01</div><h3>Sign up with your .edu email</h3><p>Your university gets verified automatically. No forms, no approvals, no waiting — just your email and you're in.</p><div class="step-line"></div></div>
+    <div class="step reveal"><div class="step-num">02</div><h3>Upload anything (literally)</h3><p>Short clips, long videos, go live, post a story. If it happened on your campus today, it belongs here.</p><div class="step-line"></div></div>
+    <div class="step reveal"><div class="step-num">03</div><h3>The world watches</h3><p>Content is fully public. Anyone can watch. Only verified students can upload. That's the whole deal.</p></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <p class="section-label reveal">Answering the obvious ones</p>
+  <h2 class="section-title reveal">Real questions.<br>Actual answers.</h2>
+  <div class="faq-list">
+    <div class="faq-item reveal"><div class="faq-q" onclick="toggleFaq(this)">Will my parents be able to see this?<span class="faq-icon">+</span></div><div class="faq-a">Yes — content is public. That's kind of the point. Post responsibly. Or don't. We're not your RA.</div></div>
+    <div class="faq-item reveal"><div class="faq-q" onclick="toggleFaq(this)">What counts as "unfiltered"? Can I post anything?<span class="faq-icon">+</span></div><div class="faq-a">Unfiltered means real and raw — not illegal or harmful. There are basic community guidelines (no harassment, no dangerous content). But we're not here to police your vibe. Campus chaos is encouraged.</div></div>
+    <div class="faq-item reveal"><div class="faq-q" onclick="toggleFaq(this)">My university doesn't have a .edu email. Can I still join?<span class="faq-icon">+</span></div><div class="faq-a">Absolutely. We support international university domains — .ac.in, .ac.uk, .edu.au, and more. If it ends in something that screams "student", you're probably good. We'll have manual verification fallback too.</div></div>
+    <div class="faq-item reveal"><div class="faq-q" onclick="toggleFaq(this)">Is this free? What's the business model?<span class="faq-icon">+</span></div><div class="faq-a">Free to use. We're figuring out a creator-first monetization model that doesn't involve taking half your earnings or selling your attention to advertisers. More on that at launch.</div></div>
+    <div class="faq-item reveal"><div class="faq-q" onclick="toggleFaq(this)">When does this actually launch?<span class="faq-icon">+</span></div><div class="faq-a">We're targeting a beta in a few months, starting with select universities. Join the waitlist and you'll hear first — plus get to influence what we build next. You're basically a co-founder at this point.</div></div>
+    <div class="faq-item reveal"><div class="faq-q" onclick="toggleFaq(this)">Can I suggest my university for the first batch?<span class="faq-icon">+</span></div><div class="faq-a">Yes — we'll prioritize campuses with the most signups. So tell your friends. The more students from your uni on the list, the faster you all get access.</div></div>
+  </div>
+</section>
+
+<!-- WAITLIST CTA -->
+<section class="cta-section" id="waitlist">
+  <h2 class="reveal">Your campus<br><span>deserves a stage.</span></h2>
+  <p class="waitlist-count reveal"><b id="ctaCount">1,247</b> students already on the list. Don't be last.</p>
+  <div class="email-form reveal">
+    <input type="email" id="emailInput" placeholder="your@university.edu" />
+    <button onclick="handleSubmit()">Get Access</button>
+  </div>
+  <p class="form-note reveal">No spam. Just an invite when we launch at your university.</p>
+  <p class="success-msg" id="successMsg">🔥 You're on the list. We'll hit you when we're live.</p>
+</section>
+
+<footer>
+  <p>© 2025 CampusRaw. Built by students, for students. No VCs were harmed.</p>
+  <div class="footer-links"><a href="#">Twitter</a><a href="#">Instagram</a><a href="#">Contact</a></div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+  function animateRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animateRing); }
+  animateRing();
+  document.querySelectorAll('a,button,input,.faq-q,.nothere-item,.map-dot,.testimonial-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ cursor.style.transform='translate(-50%,-50%) scale(2)'; ring.style.borderColor='rgba(255,60,0,0.7)'; });
+    el.addEventListener('mouseleave',()=>{ cursor.style.transform='translate(-50%,-50%) scale(1)'; ring.style.borderColor='rgba(255,60,0,0.4)'; });
+  });
+
+  // Nav
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
+
+  // Reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach((e,i)=>{ if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*70); obs.unobserve(e.target); } });
+  },{threshold:0.08});
+  reveals.forEach(el=>obs.observe(el));
+
+  // Phone carousel
+  const clips=['clip1','clip2','clip3','clip4']; let cur=0;
+  setInterval(()=>{ document.getElementById(clips[cur]).classList.add('inactive'); cur=(cur+1)%clips.length; document.getElementById(clips[cur]).classList.remove('inactive'); },4000);
+
+  // Animated counters
+  function animateCount(el,target){
+    let s=0; const inc=target/120;
+    const t=setInterval(()=>{ s+=inc; if(s>=target){s=target;clearInterval(t);} el.textContent=Math.floor(s).toLocaleString(); },16);
+  }
+  const mapObs = new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){
+      animateCount(document.getElementById('uniCount'),500);
+      animateCount(document.getElementById('countryCount'),42);
+      animateCount(document.getElementById('waitlistCount'),1247);
+      mapObs.disconnect();
+    }
+  },{threshold:0.3});
+  mapObs.observe(document.querySelector('.worldmap-section'));
+
+  // FAQ
+  function toggleFaq(el){
+    const item=el.parentElement; const isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+    if(!isOpen) item.classList.add('open');
+  }
+
+  // Email
+  function handleSubmit(){
+    const email=document.getElementById('emailInput').value;
+    if(!email||!email.includes('@')){ document.getElementById('emailInput').style.borderColor='var(--accent)'; return; }
+    document.querySelector('.email-form').style.display='none';
+    document.querySelector('.form-note').style.display='none';
+    document.getElementById('successMsg').style.display='block';
+    document.getElementById('ctaCount').textContent='1,248';
+    document.getElementById('heroCount').textContent='1,248';
+  }
+  document.getElementById('emailInput').addEventListener('keydown',e=>{ if(e.key==='Enter') handleSubmit(); });
+</script>
+</body>
+</html>
