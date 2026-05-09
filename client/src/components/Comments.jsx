@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import API_URL from '../config'
 
 export default function Comments({ post, token, onNewComment }) {
   const [comments, setComments] = useState(post.comments || [])
@@ -13,7 +14,7 @@ export default function Comments({ post, token, onNewComment }) {
     setLoading(true)
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/posts/${post._id}/comment`,
+        `${API_URL}/api/posts/${post._id}/comment`,
         { text, isAnonymous },
         { headers: { Authorization: `Bearer ${token}` } }
       )

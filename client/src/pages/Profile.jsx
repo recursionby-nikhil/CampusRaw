@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useParams, useNavigate, Link } from 'react-router-dom'
+import API_URL from '../config'
 
 const VIBES = ['fire', 'chaotic', 'important', 'cringe', 'wholesome']
 const VIBE_EMOJI = { fire: '🔥', chaotic: '🤡', important: '📢', cringe: '💀', wholesome: '🫶' }
@@ -25,7 +26,7 @@ export default function Profile() {
   const fetchProfile = async () => {
     setLoading(true)
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts/user/${username}`, {
+      const res = await axios.get(`${API_URL}/api/posts/user/${username}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setProfile(res.data.user)
@@ -39,7 +40,7 @@ export default function Profile() {
   const handleUncover = async (postId) => {
     setUncovering(postId)
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}/uncover`, {}, {
+      await axios.patch(`${API_URL}/api/posts/${postId}/uncover`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchProfile()

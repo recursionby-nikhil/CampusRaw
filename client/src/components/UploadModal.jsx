@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import API_URL from '../config'
 
 export default function UploadModal({ onClose, onSuccess }) {
   const [form, setForm] = useState({
@@ -48,170 +49,170 @@ export default function UploadModal({ onClose, onSuccess }) {
     setUploading(true)
     setError('')
     try {
-      const res = await axios.post('${import.meta.env.VITE_API_URL}/api/posts', {
+      const res = await axios.post(${ API_URL } / api / posts', {
         ...form,
         videoUrl: preview || 'https://placeholder.com/video'
       }, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      onSuccess(res.data)
-      onClose()
-    } catch (err) {
-      setError(err.response?.data?.message || 'upload failed.')
-    }
-    setUploading(false)
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    onSuccess(res.data)
+    onClose()
+  } catch (err) {
+    setError(err.response?.data?.message || 'upload failed.')
   }
+  setUploading(false)
+}
 
-  return (
-    <div style={s.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div style={s.modal}>
+return (
+  <div style={s.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div style={s.modal}>
 
-        {/* HEADER */}
-        <div style={s.header}>
-          <div style={s.headerLeft}>
-            <h2 style={s.title}>
-              {step === 1 ? 'drop your content' : 'tell us about it'}
-            </h2>
-            <span style={s.stepLabel}>step {step} of 2</span>
-          </div>
-          <button style={s.closeBtn} onClick={onClose}>✕</button>
+      {/* HEADER */}
+      <div style={s.header}>
+        <div style={s.headerLeft}>
+          <h2 style={s.title}>
+            {step === 1 ? 'drop your content' : 'tell us about it'}
+          </h2>
+          <span style={s.stepLabel}>step {step} of 2</span>
         </div>
-
-        {/* STEP 1 — FILE PICK */}
-        {step === 1 && (
-          <div
-            style={s.dropzone}
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
-          >
-            <input
-              type="file"
-              accept="video/*"
-              onChange={handleFile}
-              style={{ display: 'none' }}
-              id="videoInput"
-            />
-            <label htmlFor="videoInput" style={s.dropzoneInner}>
-              <div style={s.dropIcon}>🎬</div>
-              <div style={s.dropTitle}>drag & drop your video</div>
-              <div style={s.dropSub}>or click to browse</div>
-              <div style={s.dropFormats}>mp4 • mov • avi • max 500MB</div>
-              {error && <div style={s.dropError}>⚠ {error}</div>}
-            </label>
-          </div>
-        )}
-
-        {/* STEP 2 — DETAILS */}
-        {step === 2 && (
-          <div style={s.detailsWrap}>
-
-            {/* LEFT — VIDEO PREVIEW */}
-            <div style={s.previewWrap}>
-              {preview
-                ? <video src={preview} style={s.videoPreview} controls />
-                : <div style={s.videoPlaceholder}>🎬</div>
-              }
-              <button
-                style={s.changeBtn}
-                onClick={() => { setStep(1); setPreview(null); setVideoFile(null); }}
-              >
-                ↩ change video
-              </button>
-            </div>
-
-            {/* RIGHT — FORM */}
-            <div style={s.detailsForm}>
-
-              {/* ANON TOGGLE */}
-              <div style={s.anonToggle}>
-                <button
-                  type="button"
-                  style={!form.isAnonymous ? s.toggleActive : s.toggleInactive}
-                  onClick={() => setForm({ ...form, isAnonymous: false })}
-                >👤 named</button>
-                <button
-                  type="button"
-                  style={form.isAnonymous ? s.toggleActive : s.toggleInactive}
-                  onClick={() => setForm({ ...form, isAnonymous: true })}
-                >👻 anonymous</button>
-              </div>
-
-              {form.isAnonymous && (
-                <div style={s.anonNote}>
-                  👻 posts as <b>Anonymous • {user?.university}</b>. you can reveal yourself later.
-                </div>
-              )}
-
-              <div style={s.inputGroup}>
-                <label style={s.label}>title *</label>
-                <input
-                  style={s.input}
-                  name="title"
-                  placeholder="what's happening?"
-                  value={form.title}
-                  onChange={handleChange}
-                  maxLength={120}
-                />
-                <span style={s.charCount}>{form.title.length}/120</span>
-              </div>
-
-              <div style={s.inputGroup}>
-                <label style={s.label}>description</label>
-                <textarea
-                  style={s.textarea}
-                  name="description"
-                  placeholder="add some context... or don't."
-                  value={form.description}
-                  onChange={handleChange}
-                  rows={3}
-                  maxLength={500}
-                />
-              </div>
-
-              <div style={s.rowInputs}>
-                <div style={s.inputGroup}>
-                  <label style={s.label}>type</label>
-                  <select style={s.select} name="type" value={form.type} onChange={handleChange}>
-                    <option value="clip">⚡ Short Clip</option>
-                    <option value="video">🎬 Long Video</option>
-                    <option value="story">👻 Story</option>
-                  </select>
-                </div>
-                <div style={s.inputGroup}>
-                  <label style={s.label}>visibility</label>
-                  <select style={s.select} name="visibility" value={form.visibility} onChange={handleChange}>
-                    <option value="campus">🏫 My Campus</option>
-                    <option value="national">🌏 National</option>
-                    <option value="global">🌍 Global</option>
-                  </select>
-                </div>
-              </div>
-
-              {error && <div style={s.error}>⚠ {error}</div>}
-
-              <button
-                style={uploading ? s.btnDisabled : s.btn}
-                onClick={handleSubmit}
-                disabled={uploading}
-              >
-                {uploading ? 'uploading...' : 'post it 🔥'}
-              </button>
-
-            </div>
-          </div>
-        )}
-
+        <button style={s.closeBtn} onClick={onClose}>✕</button>
       </div>
 
-      <style>{`
+      {/* STEP 1 — FILE PICK */}
+      {step === 1 && (
+        <div
+          style={s.dropzone}
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+        >
+          <input
+            type="file"
+            accept="video/*"
+            onChange={handleFile}
+            style={{ display: 'none' }}
+            id="videoInput"
+          />
+          <label htmlFor="videoInput" style={s.dropzoneInner}>
+            <div style={s.dropIcon}>🎬</div>
+            <div style={s.dropTitle}>drag & drop your video</div>
+            <div style={s.dropSub}>or click to browse</div>
+            <div style={s.dropFormats}>mp4 • mov • avi • max 500MB</div>
+            {error && <div style={s.dropError}>⚠ {error}</div>}
+          </label>
+        </div>
+      )}
+
+      {/* STEP 2 — DETAILS */}
+      {step === 2 && (
+        <div style={s.detailsWrap}>
+
+          {/* LEFT — VIDEO PREVIEW */}
+          <div style={s.previewWrap}>
+            {preview
+              ? <video src={preview} style={s.videoPreview} controls />
+              : <div style={s.videoPlaceholder}>🎬</div>
+            }
+            <button
+              style={s.changeBtn}
+              onClick={() => { setStep(1); setPreview(null); setVideoFile(null); }}
+            >
+              ↩ change video
+            </button>
+          </div>
+
+          {/* RIGHT — FORM */}
+          <div style={s.detailsForm}>
+
+            {/* ANON TOGGLE */}
+            <div style={s.anonToggle}>
+              <button
+                type="button"
+                style={!form.isAnonymous ? s.toggleActive : s.toggleInactive}
+                onClick={() => setForm({ ...form, isAnonymous: false })}
+              >👤 named</button>
+              <button
+                type="button"
+                style={form.isAnonymous ? s.toggleActive : s.toggleInactive}
+                onClick={() => setForm({ ...form, isAnonymous: true })}
+              >👻 anonymous</button>
+            </div>
+
+            {form.isAnonymous && (
+              <div style={s.anonNote}>
+                👻 posts as <b>Anonymous • {user?.university}</b>. you can reveal yourself later.
+              </div>
+            )}
+
+            <div style={s.inputGroup}>
+              <label style={s.label}>title *</label>
+              <input
+                style={s.input}
+                name="title"
+                placeholder="what's happening?"
+                value={form.title}
+                onChange={handleChange}
+                maxLength={120}
+              />
+              <span style={s.charCount}>{form.title.length}/120</span>
+            </div>
+
+            <div style={s.inputGroup}>
+              <label style={s.label}>description</label>
+              <textarea
+                style={s.textarea}
+                name="description"
+                placeholder="add some context... or don't."
+                value={form.description}
+                onChange={handleChange}
+                rows={3}
+                maxLength={500}
+              />
+            </div>
+
+            <div style={s.rowInputs}>
+              <div style={s.inputGroup}>
+                <label style={s.label}>type</label>
+                <select style={s.select} name="type" value={form.type} onChange={handleChange}>
+                  <option value="clip">⚡ Short Clip</option>
+                  <option value="video">🎬 Long Video</option>
+                  <option value="story">👻 Story</option>
+                </select>
+              </div>
+              <div style={s.inputGroup}>
+                <label style={s.label}>visibility</label>
+                <select style={s.select} name="visibility" value={form.visibility} onChange={handleChange}>
+                  <option value="campus">🏫 My Campus</option>
+                  <option value="national">🌏 National</option>
+                  <option value="global">🌍 Global</option>
+                </select>
+              </div>
+            </div>
+
+            {error && <div style={s.error}>⚠ {error}</div>}
+
+            <button
+              style={uploading ? s.btnDisabled : s.btn}
+              onClick={handleSubmit}
+              disabled={uploading}
+            >
+              {uploading ? 'uploading...' : 'post it 🔥'}
+            </button>
+
+          </div>
+        </div>
+      )}
+
+    </div>
+
+    <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
         input::placeholder, textarea::placeholder { color: #333; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: #ff3c00 !important; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
       `}</style>
-    </div>
-  )
+  </div>
+)
 }
 
 const s = {

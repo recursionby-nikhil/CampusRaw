@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import UploadModal from '../components/UploadModal'
 import Comments from '../components/Comments'
+import API_URL from '../config'
 
 const VIBES = ['fire', 'chaotic', 'important', 'cringe', 'wholesome']
 const VIBE_EMOJI = { fire: '🔥', chaotic: '🤡', important: '📢', cringe: '💀', wholesome: '🫶' }
@@ -30,7 +31,7 @@ export default function Feed() {
   const fetchFeed = async (feedType) => {
     setLoading(true)
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts/feed/${feedType}`, {
+      const res = await axios.get(`${API_URL}/api/posts/feed/${feedType}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setPosts(res.data)
@@ -41,7 +42,7 @@ export default function Feed() {
   const handleVibe = async (postId, vibe) => {
     setRatingPost(postId)
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/posts/${postId}/rate`,
+      await axios.post(`${API_URL}/api/posts/${postId}/rate`,
         { vibe },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -52,7 +53,7 @@ export default function Feed() {
 
   const handleFlag = async (postId) => {
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}/flag`,
+      await axios.patch(`${API_URL}/api/posts/${postId}/flag`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )
