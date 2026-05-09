@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
+import API_URL from '../config'
+
 
 export default function Login() {
   const navigate = useNavigate()
@@ -15,7 +17,7 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', form)
+      const res = await axios.post(`${API_URL}/api/auth/login`, form)
       localStorage.setItem('token', res.data.token)
       localStorage.setItem('user', JSON.stringify(res.data.user))
       navigate('/')
@@ -149,13 +151,14 @@ export default function Login() {
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body, #root { width: 100%; min-height: 100vh; }
-        body { background: #0a0a0a; overflow-x: hidden; }
-        input::placeholder { color: #333; }
-        input:focus { outline: none; border-color: #ff3c00 !important; }
-        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-      `}</style>
+        * { box- sizing: border - box; margin: 0; padding: 0;
+    }
+        html, body, #root { width: 100 %; min - height: 100vh; }
+        body { background: #0a0a0a; overflow - x: hidden; }
+    input::placeholder { color: #333; }
+    input:focus { outline: none; border - color: #ff3c00!important; }
+    @keyframes blink { 0 %, 100 % { opacity: 1; } 50 % { opacity: 0.3; } }
+    `}</style>
 
     </div>
   )

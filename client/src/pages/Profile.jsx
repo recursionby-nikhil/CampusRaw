@@ -41,7 +41,7 @@ export default function Profile() {
   const handleUncover = async (postId) => {
     setUncovering(postId)
     try {
-      await axios.patch(`http://localhost:5000/api/posts/${postId}/uncover`, {}, {
+      await axios.patch(`${API_URL}/api/posts/${postId}/uncover`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchProfile()

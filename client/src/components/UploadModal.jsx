@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import API_URL from '../config'
 
 export default function UploadModal({ onClose, onSuccess }) {
   const [form, setForm] = useState({
@@ -48,7 +49,7 @@ export default function UploadModal({ onClose, onSuccess }) {
     setUploading(true)
     setError('')
     try {
-      const res = await axios.post('http://localhost:5000/api/posts', {
+      const res = await axios.post(`${API_URL}/api/posts`, {
         ...form,
         videoUrl: preview || 'https://placeholder.com/video'
       }, {
