@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-// import { useNavigate } from 'react-router-dom'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import UploadModal from '../components/UploadModal'
-import Comments from '../components/Comments'
 import API_URL from '../config'
 
 const VIBES = ['fire', 'chaotic', 'important', 'cringe', 'wholesome']
@@ -18,7 +16,6 @@ export default function Feed() {
   const [ratingPost, setRatingPost] = useState(null)
   const [mounted, setMounted] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
-  const [openComments, setOpenComments] = useState(null)
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
 
@@ -185,10 +182,7 @@ export default function Feed() {
                     <div style={s.authorName}>
                       {post.isAnonymous && !post.isUncovered
                         ? 'anonymous'
-                        : <Link to={`/profile/${post.author?.username}`} style={{ color: '#f0ece4', textDecoration: 'none' }}>
-                          @{post.author?.username || 'unknown'}
-                        </Link>
-                      }
+                        : `@${post.author?.username || 'unknown'}`}
                     </div>
                     <div style={s.authorUni}>
                       {post.university} • {new Date(post.createdAt).toLocaleDateString()}
@@ -206,22 +200,12 @@ export default function Feed() {
               <h2 style={s.cardTitle}>{post.title}</h2>
               {post.description && <p style={s.cardDesc}>{post.description}</p>}
 
-
-              {/* CLOUDFLARE R2 needed here for video streaming */}
               <div style={s.videoBox}>
-                {post.videoUrl && post.videoUrl.startsWith('blob:') ? (
-                  <video
-                    src={post.videoUrl}
-                    style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', background: '#0a0a0a' }}
-                    controls
-                  />
-                ) : (
-                  <div style={s.videoInner}>
-                    <div style={s.videoPlayIcon}>▶</div>
-                    <span style={s.videoLabel}>video player — coming soon</span>
-                    <span style={s.videoType}>{post.type?.toUpperCase()}</span>
-                  </div>
-                )}
+                <div style={s.videoInner}>
+                  <div style={s.videoPlayIcon}>▶</div>
+                  <span style={s.videoLabel}>video player — coming soon</span>
+                  <span style={s.videoType}>{post.type?.toUpperCase()}</span>
+                </div>
               </div>
 
               <div style={s.vibeSection}>
@@ -258,12 +242,7 @@ export default function Feed() {
 
               <div style={s.cardFooter}>
                 <div style={s.footerLeft}>
-                  <button
-                    style={s.commentToggleBtn}
-                    onClick={() => setOpenComments(openComments === post._id ? null : post._id)}
-                  >
-                    💬 {openComments === post._id ? '▲' : '▼'} {post.comments?.length || 0} comments
-                  </button>
+                  <span style={s.footerStat}>💬 {post.comments?.length || 0}</span>
                   <span style={s.footerStat}>👁 {post.views || 0}</span>
                   <span style={s.footerStat}>⚡ {post.ratings?.length || 0} ratings</span>
                 </div>
@@ -271,10 +250,6 @@ export default function Feed() {
                   ⚑ flag
                 </button>
               </div>
-
-              {openComments === post._id && (
-                <Comments post={post} token={token} onNewComment={() => fetchFeed(tab)} />
-              )}
 
             </div>
           )
@@ -364,7 +339,5 @@ const s = {
   cardFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1a1a1a', paddingTop: '16px' },
   footerLeft: { display: 'flex', gap: '16px' },
   footerStat: { fontSize: '0.75rem', color: '#444' },
-
   flagBtn: { background: 'transparent', border: 'none', color: '#2a2a2a', fontSize: '0.72rem', cursor: 'pointer', letterSpacing: '0.05em' },
-  commentToggleBtn: { background: 'transparent', border: 'none', color: '#555', fontSize: '0.75rem', cursor: 'pointer', padding: '0', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.03em' },
 }

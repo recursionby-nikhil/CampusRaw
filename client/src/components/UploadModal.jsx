@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import axios from 'axios'
-import API_URL from '../config'
 
 export default function UploadModal({ onClose, onSuccess }) {
   const [form, setForm] = useState({
@@ -49,7 +48,7 @@ export default function UploadModal({ onClose, onSuccess }) {
     setUploading(true)
     setError('')
     try {
-      const res = await axios.post(`${API_URL}/api/posts`, {
+      const res = await axios.post('http://localhost:5000/api/posts', {
         ...form,
         videoUrl: preview || 'https://placeholder.com/video'
       }, {
@@ -234,7 +233,7 @@ const s = {
 
   detailsWrap: { display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '500px' },
   previewWrap: { borderRight: '1px solid #1e1e1e', padding: '28px', display: 'flex', flexDirection: 'column', gap: '16px' },
-  videoPreview: { width: '100%', aspectRatio: '400px', background: '#0a0a0a', objectFit: 'contain' },
+  videoPreview: { width: '100%', aspectRatio: '16/9', background: '#0a0a0a', objectFit: 'cover' },
   videoPlaceholder: { width: '100%', aspectRatio: '16/9', background: '#0a0a0a', border: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' },
   changeBtn: { background: 'transparent', border: '1px solid #1e1e1e', color: '#555', padding: '8px', fontSize: '0.78rem', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" },
 

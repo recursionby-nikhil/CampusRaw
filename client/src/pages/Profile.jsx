@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import API_URL from '../config'
 
+
 const VIBES = ['fire', 'chaotic', 'important', 'cringe', 'wholesome']
 const VIBE_EMOJI = { fire: '🔥', chaotic: '🤡', important: '📢', cringe: '💀', wholesome: '🫶' }
 const VIBE_COLOR = { fire: '#ff3c00', chaotic: '#ff9900', important: '#ffcc00', cringe: '#aa00ff', wholesome: '#00cc88' }
@@ -40,7 +41,7 @@ export default function Profile() {
   const handleUncover = async (postId) => {
     setUncovering(postId)
     try {
-      await axios.patch(`${API_URL}/api/posts/${postId}/uncover`, {}, {
+      await axios.patch(`http://localhost:5000/api/posts/${postId}/uncover`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchProfile()

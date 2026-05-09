@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import API_URL from '../config'
 
-export default function Comments({ post, token, onNewComment }) {
+export default function Comments({ post, token }) {
   const [comments, setComments] = useState(post.comments || [])
   const [text, setText] = useState('')
   const [isAnonymous, setIsAnonymous] = useState(false)
@@ -19,7 +19,6 @@ export default function Comments({ post, token, onNewComment }) {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       setComments([...comments, res.data])
-      if (onNewComment) onNewComment()
       setText('')
     } catch (err) { console.error(err) }
     setLoading(false)
