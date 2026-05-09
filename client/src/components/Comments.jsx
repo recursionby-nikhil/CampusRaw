@@ -13,7 +13,7 @@ export default function Comments({ post, token, onNewComment }) {
     setLoading(true)
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/posts/${post._id}/comment`,
+        `${import.meta.env.VITE_API_URL}/api/posts/${post._id}/comment`,
         { text, isAnonymous },
         { headers: { Authorization: `Bearer ${token}` } }
       )

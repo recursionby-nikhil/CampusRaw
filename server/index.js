@@ -9,7 +9,14 @@ const adminRoutes = require('./routes/admin');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://campusraw.vercel.app',
+    'https://campusraw-landing.vercel.app'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Connect to MongoDB
