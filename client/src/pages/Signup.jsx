@@ -21,7 +21,7 @@ export default function Signup() {
     setError('')
     setLoading(true)
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', form)
+      const res = await axios.post('${import.meta.env.VITE_API_URL}/api/auth/signup', form)
       localStorage.setItem('token', res.data.token)
       localStorage.setItem('user', JSON.stringify(res.data.user))
       navigate('/')
@@ -42,7 +42,7 @@ export default function Signup() {
         <div style={s.leftInner}>
           <div style={s.marqueeWrap}>
             <div style={s.marquee}>
-              {['UNFILTERED','•','REAL','•','CAMPUS','•','CHAOS','•','UNFILTERED','•','REAL','•','CAMPUS','•','CHAOS','•'].map((w,i) => (
+              {['UNFILTERED', '•', 'REAL', '•', 'CAMPUS', '•', 'CHAOS', '•', 'UNFILTERED', '•', 'REAL', '•', 'CAMPUS', '•', 'CHAOS', '•'].map((w, i) => (
                 <span key={i} style={w === '•' ? s.dot : s.marqueeWord}>{w}</span>
               ))}
             </div>
@@ -157,7 +157,7 @@ export default function Signup() {
             )}
 
             <div style={s.inputRow}>
-              <div style={{...s.inputGroup, flex: 1}}>
+              <div style={{ ...s.inputGroup, flex: 1 }}>
                 <label style={s.label}>university</label>
                 <input
                   style={s.input}
@@ -168,7 +168,7 @@ export default function Signup() {
                   required
                 />
               </div>
-              <div style={{...s.inputGroup, flex: 1}}>
+              <div style={{ ...s.inputGroup, flex: 1 }}>
                 <label style={s.label}>country</label>
                 <input
                   style={s.input}

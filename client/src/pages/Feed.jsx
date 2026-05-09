@@ -30,7 +30,7 @@ export default function Feed() {
   const fetchFeed = async (feedType) => {
     setLoading(true)
     try {
-      const res = await axios.get(`http://localhost:5000/api/posts/feed/${feedType}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts/feed/${feedType}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setPosts(res.data)
@@ -41,7 +41,7 @@ export default function Feed() {
   const handleVibe = async (postId, vibe) => {
     setRatingPost(postId)
     try {
-      await axios.post(`http://localhost:5000/api/posts/${postId}/rate`,
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/posts/${postId}/rate`,
         { vibe },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -52,7 +52,7 @@ export default function Feed() {
 
   const handleFlag = async (postId) => {
     try {
-      await axios.patch(`http://localhost:5000/api/posts/${postId}/flag`,
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}/flag`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -102,12 +102,12 @@ export default function Feed() {
       {/* HERO STRIP */}
       <div style={s.heroStrip}>
         <div style={s.heroStripInner}>
-          {['UNFILTERED','REAL','CAMPUS','CHAOS','UNFILTERED','REAL','CAMPUS','CHAOS',
-            'UNFILTERED','REAL','CAMPUS','CHAOS','UNFILTERED','REAL','CAMPUS','CHAOS'].map((word, i) => (
-            <span key={i} style={i % 2 === 0 ? s.heroStripText : s.heroStripDot}>
-              {i % 2 === 0 ? word : '•'}
-            </span>
-          ))}
+          {['UNFILTERED', 'REAL', 'CAMPUS', 'CHAOS', 'UNFILTERED', 'REAL', 'CAMPUS', 'CHAOS',
+            'UNFILTERED', 'REAL', 'CAMPUS', 'CHAOS', 'UNFILTERED', 'REAL', 'CAMPUS', 'CHAOS'].map((word, i) => (
+              <span key={i} style={i % 2 === 0 ? s.heroStripText : s.heroStripDot}>
+                {i % 2 === 0 ? word : '•'}
+              </span>
+            ))}
         </div>
       </div>
 
@@ -138,8 +138,8 @@ export default function Feed() {
 
         {loading && (
           <div style={s.loadingWrap}>
-            {[1,2,3].map(i => (
-              <div key={i} style={{...s.skeleton, animationDelay: `${i * 0.15}s`}} />
+            {[1, 2, 3].map(i => (
+              <div key={i} style={{ ...s.skeleton, animationDelay: `${i * 0.15}s` }} />
             ))}
           </div>
         )}
@@ -159,7 +159,7 @@ export default function Feed() {
           const heat = getHeatLevel(post.heatScore)
           const topVibe = VIBES.reduce((a, b) =>
             (post.ratings?.filter(r => r.vibe === b).length || 0) >
-            (post.ratings?.filter(r => r.vibe === a).length || 0) ? b : a, 'fire')
+              (post.ratings?.filter(r => r.vibe === a).length || 0) ? b : a, 'fire')
           const isRating = ratingPost === post._id
 
           return (
@@ -195,7 +195,7 @@ export default function Feed() {
                   </div>
                 </div>
                 <div style={s.badges}>
-                  <span style={{...s.heatBadge, color: heat.color, borderColor: heat.color + '40'}}>
+                  <span style={{ ...s.heatBadge, color: heat.color, borderColor: heat.color + '40' }}>
                     {heat.label}
                   </span>
                   <span style={s.scoreBadge}>🌡 {Math.round(post.heatScore)}</span>
@@ -206,7 +206,7 @@ export default function Feed() {
               {post.description && <p style={s.cardDesc}>{post.description}</p>}
 
 
-            {/* CLOUDFLARE R2 needed here for video streaming */}
+              {/* CLOUDFLARE R2 needed here for video streaming */}
               <div style={s.videoBox}>
                 {post.videoUrl && post.videoUrl.startsWith('blob:') ? (
                   <video
@@ -363,7 +363,7 @@ const s = {
   cardFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1a1a1a', paddingTop: '16px' },
   footerLeft: { display: 'flex', gap: '16px' },
   footerStat: { fontSize: '0.75rem', color: '#444' },
-  
+
   flagBtn: { background: 'transparent', border: 'none', color: '#2a2a2a', fontSize: '0.72rem', cursor: 'pointer', letterSpacing: '0.05em' },
   commentToggleBtn: { background: 'transparent', border: 'none', color: '#555', fontSize: '0.75rem', cursor: 'pointer', padding: '0', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.03em' },
 }

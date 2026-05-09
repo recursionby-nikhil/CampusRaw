@@ -25,7 +25,7 @@ export default function Profile() {
   const fetchProfile = async () => {
     setLoading(true)
     try {
-      const res = await axios.get(`http://localhost:5000/api/posts/user/${username}`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts/user/${username}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setProfile(res.data.user)
@@ -39,7 +39,7 @@ export default function Profile() {
   const handleUncover = async (postId) => {
     setUncovering(postId)
     try {
-      await axios.patch(`http://localhost:5000/api/posts/${postId}/uncover`, {}, {
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}/uncover`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchProfile()
@@ -160,7 +160,7 @@ export default function Profile() {
             const heat = getHeatLevel(post.heatScore)
             const topVibe = VIBES.reduce((a, b) =>
               (post.ratings?.filter(r => r.vibe === b).length || 0) >
-              (post.ratings?.filter(r => r.vibe === a).length || 0) ? b : a, 'fire')
+                (post.ratings?.filter(r => r.vibe === a).length || 0) ? b : a, 'fire')
 
             return (
               <div
@@ -196,7 +196,7 @@ export default function Profile() {
                     {post.description && <p style={s.cardDesc}>{post.description}</p>}
                   </div>
                   <div style={s.badges}>
-                    <span style={{...s.heatBadge, color: heat.color, borderColor: heat.color + '40'}}>
+                    <span style={{ ...s.heatBadge, color: heat.color, borderColor: heat.color + '40' }}>
                       {heat.label}
                     </span>
                     <span style={s.typeBadge}>{post.type?.toUpperCase()}</span>
@@ -215,7 +215,7 @@ export default function Profile() {
                   <span style={s.footerStat}>💬 {post.comments?.length || 0}</span>
                   <span style={s.footerStat}>⚡ {post.ratings?.length || 0} ratings</span>
                   <span style={s.footerStat}>🌡 {Math.round(post.heatScore)} heat</span>
-                  <span style={{...s.visibilityBadge}}>
+                  <span style={{ ...s.visibilityBadge }}>
                     {post.visibility === 'global' ? '🌍' : post.visibility === 'national' ? '🌏' : '🏫'} {post.visibility}
                   </span>
                 </div>
