@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://campusraw.vercel.app',
+    'https://campus-raw.vercel.app',
     'https://campusraw-landing.vercel.app'
   ],
   credentials: true
